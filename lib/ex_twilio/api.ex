@@ -63,6 +63,17 @@ defmodule ExTwilio.Api do
       ExTwilio.Api.create(ExTwilio.Call, [])
       {:error, %{"message" => "No 'To' number is specified"}, 400}
   """
+
+  # TEMP workaround
+  def create(ExTwilio.ProgrammableChat.Channel = module, data, options) do
+    data = format_data(data)
+
+    "https://chat.twilio.com/v2/Services/#{options[:service_id]}/Channels/#{options[:to]}/Messages"
+    |> IO.inspect(label: "CREATE URL")
+    |> Api.post!(data, auth_header(options))
+    |> Parser.parse(module)
+  end
+
   @spec create(atom, data, list) :: Parser.success() | Parser.error()
   def create(module, data, options \\ []) do
     data = format_data(data)
